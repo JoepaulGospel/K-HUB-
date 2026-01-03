@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-HUB | Creative Infrastructure</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=DM+Serif+Display:italic&display=swap" rel="stylesheet">
+<style>
+:root { --kb-orange: #FF8C00; }
+body { background-color: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+.font-serif { font-family: 'DM Serif Display', serif; }
+.glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.05); }
+.hidden { display: none; }
+input::placeholder { color: #333; }
+.active-tab { background: rgba(255, 255, 255, 0.05); color: white !important; }
+</style>
+</head>
+<body class="flex h-screen w-full">
+<!-- 1. THE GATEKEEPER (LOGIN SCREEN) -->
+<div id="gatekeeper" class="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center p-6">
+<div class="max-w-sm w-full space-y-12">
+<div class="text-center">
+<h1 class="text-4xl font-black italic tracking-tighter uppercase underline decoration-orange-500 decoration-4 underline-offset-8">K-HUB</h1>
+<p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-4">Infrastructure v1.0</p>
+</div>
+<div class="glass p-10 rounded-[40px] shadow-2xl">
+<div class="space-y-6">
+<div>
+<label class="text-[9px] font-black uppercase tracking-widest text-orange-500 mb-2 block ml-1">Agency Hub</label>
+<input id="input-hub" type="text" placeholder="e.g. TIZIANO" class="w-full bg-black border border-white/10 p-4 rounded-2xl outline-none focus:border-white transition-all uppercase font-bold text-xl tracking-tighter">
+</div>
+<div>
+<label class="text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-2 block ml-1">Access Code</label>
+<input id="input-code" type="password" placeholder="••••" maxlength="4" class="w-full bg-black border border-white/10 p-4 rounded-2xl outline-none focus:border-white transition-all text-center font-bold text-2xl tracking-[0.5em]">
+</div>
+<button onclick="authHub()" class="w-full bg-white text-black py-5 rounded-[24px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-orange-500 hover:text-white transition-all">
+Enter Hub <i data-lucide="arrow-right" size="14"></i>
+</button>
+</div>
+</div>
+<p class="text-center text-[9px] font-bold text-zinc-700 uppercase tracking-widest">Powered by Kodeblock Architecture</p>
+</div>
+</div>
+<!-- 2. THE COMMAND CENTER (INTERNAL) -->
+<div id="command-center" class="hidden flex h-full w-full animate-fade-in">
+<!-- SIDEBAR -->
+<aside class="w-64 border-r border-white/5 bg-[#000000] flex flex-col h-full">
+<div class="p-10 pb-16"><h2 id="hub-logo" class="text-xl font-black italic tracking-tighter text-white uppercase">HUB</h2></div>
+<nav class="flex-1 px-4 space-y-10">
+<section>
+<p class="text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em] mb-4 ml-3">Engine Room</p>
+<button class="active-tab w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-white rounded-lg">
+<i data-lucide="layout" size="14"></i> Projects
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-zinc-500 hover:text-white transition">
+<i data-lucide="message-square" size="14"></i> Messages
+</button>
+</section>
+<section>
+<p class="text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em] mb-4 ml-3">The Office</p>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-zinc-500 hover:text-white transition">
+<i data-lucide="link" size="14"></i> Client Invites
+</button>
+</section>
+</nav>
+<div class="p-6 mt-auto flex items-center gap-3 border-t border-white/5">
+<div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center font-black text-black italic text-xs">G</div>
+<div class="text-left"><p id="staff-name" class="text-[11px] font-black text-white uppercase tracking-tighter">Joepaul</p><p class="text-[8px] text-green-500 font-bold uppercase tracking-widest">● Creative</p></div>
+</div>
+</aside>
+<!-- MAIN OPS -->
+<main class="flex-1 flex flex-col bg-black">
+<header class="h-16 flex items-center justify-between px-10 border-b border-white/5">
+<h3 class="text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em]">Active Projects</h3>
+<button class="bg-white text-black px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-white transition-all">+ New Project</button>
+</header>
+<div class="flex-1 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto">
+<!-- Project Card -->
+<div class="glass p-8 rounded-[32px] hover:border-orange-500/30 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-10">
+<div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-orange-500/50"><i data-lucide="video" class="text-zinc-500 group-hover:text-orange-500" size="18"></i></div>
+<span class="text-[9px] font-black uppercase text-zinc-600 tracking-widest">In Progress</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-2 tracking-tight">Nike Summer '26</h4>
+<p class="text-zinc-500 text-xs font-medium mb-6">3 Assets · v2 Review</p>
+<div class="h-[1px] w-full bg-white/5 mb-6"></div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-black text-zinc-700 uppercase tracking-widest">Client: Nike Global</span>
+<i data-lucide="chevron-right" size="14" class="text-zinc-700"></i>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+lucide.createIcons();
+// THE BRAIN (Backend Connection)
+const supabaseUrl = 'https://dbwmlbzadjvcnzcmobda.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRid21sYnphZGp2Y256Y21vYmRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0MjQ4NDUsImV4cCI6MjA4MzAwMDg0NX0.e8wwQzKYdiaKv8lKCPsp6-xeu4K5oRmKGLKAvMczLD0';
+const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
+async function authHub() {
+const hub = document.getElementById('input-hub').value.toUpperCase();
+const code = document.getElementById('input-code').value;
+if(!hub || !code) return alert("Credentials required.");
+// 1. Check if Hub exists
+const { data: hubs, error } = await supabase
+.from('hubs')
+.select('*')
+.eq('name', hub);
+if (error || hubs.length === 0) return alert("Agency Hub not found.");
+// 2. Check if Staff Code is valid
+const { data: staff, staffError } = await supabase
+.from('staff')
+.select('*')
+.eq('hub_id', hubs[0].id)
+.eq('access_code', code);
+if (staffError || staff.length === 0) return alert("Invalid Access Code.");
+// Success Transition
+enterPlatform(hubs[0].name, staff[0].username);
+}
+function enterPlatform(hubName, staffName) {
+document.getElementById('gatekeeper').classList.add('hidden');
+document.getElementById('command-center').classList.remove('hidden');
+document.getElementById('hub-logo').innerText = hubName;
+document.getElementById('staff-name').innerText = staffName;
+lucide.createIcons();
+}
+</script>
+</body>
+</html>
